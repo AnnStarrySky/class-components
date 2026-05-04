@@ -48,7 +48,7 @@ class Results extends React.Component<Props, State> {
 
     return (
       <div>
-        <h2 className="text-xl font-bold mb-4">
+        <h2 className="text-xl font-bold mb-4 mt-4">
           {searchQuery ? `Results for: ${searchQuery}` : 'Results'}
         </h2>
         {filteredItems.length > 0 ? (

@@ -1,6 +1,7 @@
 import React from 'react';
 import Search from '../Search/Search';
 import Results from '../Results/Results';
+import ErrorSimulator from '../ErrorBoundary/ErrorSimulator';
 
 class Layout extends React.Component {
   state = {
@@ -8,9 +9,13 @@ class Layout extends React.Component {
   };
 
   handleSearch = (value: string) => {
-    this.setState({ searchQuery: value });
-    localStorage.setItem('searchQuery', value);
-  };
+  const trimmed = value.trim();
+
+  if (trimmed === this.state.searchQuery) return;
+
+  this.setState({ searchQuery: trimmed });
+  localStorage.setItem('searchQuery', trimmed);
+};
 
   render() {
     return (
@@ -19,6 +24,7 @@ class Layout extends React.Component {
           <Search onSearch={this.handleSearch} initialValue={this.state.searchQuery} />
         </header>
         <main className="flex-1 p-4">
+          <ErrorSimulator />
           <Results searchQuery={this.state.searchQuery} />
         </main>
       </div>
