@@ -1,41 +1,32 @@
-import React, { type ChangeEvent } from 'react';
+import React from 'react';
 
-type SearchQuery = {
-  searchValue: string
-}
+type Props = {
+  onSearch: (value: string) => void;
+  initialValue: string;
+};
 
-type Props = Record<string, never>;
-
-class Search extends React.Component<Props, SearchQuery> {
-  state: SearchQuery = {
-    searchValue: localStorage.getItem('searchQuery') || '',
-  }
-
-  handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({searchValue: e.target.value});
+class Search extends React.Component<Props> {
+  state = {
+    searchQuery: this.props.initialValue,
   };
 
-    onSearchClick = () => {
-    const trimmedValue = this.state.searchValue.trim();
-
-    if (trimmedValue){
-      localStorage.setItem('searchQuery', trimmedValue)
-    }
+  onSearchClick = () => {
+    this.props.onSearch(this.state.searchQuery.trim());
   };
+
   render() {
-    const { searchValue } = this.state;
     return (
       <div className="flex gap-2">
         <input
           type="text"
           placeholder="Search..."
           className="border p-2 flex-1"
-          value={searchValue}
-          onChange={this.handleInputChange}
+          value={this.state.searchQuery}
+          onChange={(e) => this.setState({ searchQuery: e.target.value })}
         />
         <button 
-        className="bg-blue-500 text-white px-4"
-        onClick={this.onSearchClick}
+          className="bg-blue-500 text-white px-4"
+          onClick={this.onSearchClick}
         >
           Search
         </button>
