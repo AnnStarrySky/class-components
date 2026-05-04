@@ -6,12 +6,12 @@ class Layout extends React.Component {
   render() {
     return (
       <div className="max-w-[1400px] min-h-screen flex flex-col mx-auto">
-        <section className="p-4 bg-gray-100">
+        <header className="p-4 bg-gray-100">
           <Search />
-        </section>
-        <section className="flex-1 p-4">
+        </header>
+        <main className="flex-1 p-4">
           <Results />
-        </section>
+        </main>
       </div>
     );
   }
