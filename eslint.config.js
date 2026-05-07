@@ -29,7 +29,8 @@ export default defineConfig([
       },
     },
     rules: {
-       "react/jsx-no-target-blank": "error",
+      "react/jsx-no-target-blank": "error",
+      "@typescript-eslint/no-explicit-any": "error",
     }
   },
 ]);

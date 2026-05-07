@@ -29,13 +29,14 @@ class Search extends React.Component<Props, State> {
     return (
       <div className="flex gap-2">
         <input
-          type="text"
+          type="search"
           placeholder="Search..."
           className="border p-2 flex-1"
           value={this.state.searchQuery}
           onChange={this.handleInputChange}
         />
         <button
+          type="submit"
           className="bg-blue-500 text-white px-4"
           onClick={this.onSearchClick}
         >
