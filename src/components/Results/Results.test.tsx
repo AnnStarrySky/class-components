@@ -1,10 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import Results from './Results';
-import { fetchPokemons } from '../../api/pokemonApi';
+import { fetchPokemons, fetchOnePokemon } from '../../api/pokemonApi';
 import type { Mock } from 'vitest';
 
 vi.mock('../../api/pokemonApi', () => ({
   fetchPokemons: vi.fn(),
+  fetchOnePokemon: vi.fn(),
 }));
 
 test('shows loading state on initial render', () => {
@@ -29,3 +30,23 @@ test('renders pokemon list after successful API call', async () => {
     });
 
 });
+
+test('fetches and renders single pokemon when searchQuery is provided', async () => {
+    (fetchOnePokemon as Mock).mockResolvedValue({
+        name: 'pikachu',
+    });
+
+    render(<Results searchQuery="pikachu" />);
+
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    expect(await screen.findByText('pikachu')).toBeInTheDocument();
+});    
+
+test('shows "no results found" when API returns empty list', async () => {
+    (fetchPokemons as Mock).mockResolvedValue({
+         results: [],
+    });
+
+    render(<Results searchQuery="" />);
+    expect(await screen.findByText(/no results found/i)).toBeInTheDocument();
+});    

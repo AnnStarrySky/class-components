@@ -6,7 +6,7 @@ test('renders search input', () => {
 
     render(<Search onSearch={() => {}} />);
 
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    expect(screen.getByRole('searchbox')).toBeInTheDocument();
 });
 
 test('renders input with value from localStorage', () => {
@@ -15,7 +15,7 @@ test('renders input with value from localStorage', () => {
 
     render(<Search onSearch={() => {}} />);
 
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('searchbox');
 
     expect(input).toHaveValue('pikachu');
 });
@@ -24,7 +24,7 @@ test('updates input value on user typing', () => {
 
     render(<Search onSearch={() => {}} />);
 
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('searchbox');
 
     fireEvent.change(input, { target: { value: 'charizard' } });
 
@@ -37,7 +37,7 @@ test('calls onSearch with trimmed value and saves to localStorage', () => {
 
     render(<Search onSearch={onSearch} />);
 
-    const input = screen.getByRole('textbox');
+    const input = screen.getByRole('searchbox');
     const button = screen.getByRole('button');
 
     fireEvent.change(input, { target: { value: '  bulbasaur  ' }});
