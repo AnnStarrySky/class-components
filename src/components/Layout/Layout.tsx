@@ -21,7 +21,7 @@ class Layout extends React.Component {
     return (
       <div className="max-w-[1400px] min-h-screen flex flex-col mx-auto">
         <header className="p-4 bg-gray-100">
-          <Search onSearch={this.handleSearch} initialValue={this.state.searchQuery} />
+          <Search onSearch={this.handleSearch} />
         </header>
         <main className="flex-1 p-4">
           <ErrorSimulator />
