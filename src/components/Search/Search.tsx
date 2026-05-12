@@ -1,40 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-type Props = {
-  onSearch: (value: string) => void;
-};
+const Search = ({ onSearch }: { onSearch: (v: string) => void }) => {
+  const [value, setValue] = useState(() => localStorage.getItem('searchQuery') || '');
 
-const Search = ({ onSearch }: Props) => {
-  const [searchQuery, setSearchQuery] = useState(() => 
-    localStorage.getItem('searchQuery') || ''
-  );
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const onSearchClick = () => {
-    const trimmedValue = searchQuery.trim();
-    onSearch(trimmedValue);
-    localStorage.setItem('searchQuery', trimmedValue);
+  const handleAction = () => {
+    const trimmed = value.trim();
+    onSearch(trimmed);
+    localStorage.setItem('searchQuery', trimmed);
   };
 
   return (
     <div className="flex gap-2">
       <input
         type="search"
-        placeholder="Search..."
         className="border p-2 flex-1"
-        value={searchQuery}
-        onChange={handleInputChange}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Search..."
       />
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4"
-        onClick={onSearchClick}
-      >
-        Search
-      </button>
+      <button onClick={handleAction} className="bg-blue-500 text-white px-4">Search</button>
     </div>
   );
 };

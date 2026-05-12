@@ -1,83 +1,64 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchPokemons, fetchOnePokemon } from '../../api/pokemonApi';
+import type { Pokemon } from '../../api/pokemonApi';
+import { useSearchParams } from "react-router-dom";
 
-type Pokemon = {
-  name: string;
-  url?: string;
-  id?: number;
-  stats?: {
-    base_stat: number;
-    stat: { name: string };
-  }[];
-};
+const ITEMS_PER_PAGE = 10;
 
-type Props = {
-  searchQuery: string;
-};
-
-const Results: React.FC<Props> = ({ searchQuery }) => {
+const Results = ({ searchQuery }: { searchQuery: string }) => {
   const [items, setItems] = useState<Pokemon[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const page = parseInt(searchParams.get("page") || "1");
 
   useEffect(() => {
-    const loadData = async () => {
+    const load = async () => {
       setLoading(true);
       setError(null);
-
       try {
         if (searchQuery) {
           const data = await fetchOnePokemon(searchQuery);
           setItems([data]);
         } else {
-          const data = await fetchPokemons();
-          setItems(data.results || []);
+          const data = await fetchPokemons((page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
+          setItems(data.results);
         }
       } catch {
         setItems([]);
-        setError(searchQuery ? 'Pokemon not found' : 'Failed to load data');
+        setError("Nothing found");
       } finally {
         setLoading(false);
       }
     };
-
-    loadData();
-  }, [searchQuery]);
+    load();
+  }, [searchQuery, page]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4 mt-4">
-        {searchQuery ? `Results for: ${searchQuery}` : 'Results'}
-      </h2>
-      {items.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {items.map((pokemon) => (
-            <div key={pokemon.name} className="p-4 border rounded shadow-sm bg-white">
-              <h3 className="font-bold capitalize text-lg">{pokemon.name}</h3>
-              
-              {pokemon.stats ? (
-                <div className="mt-2">
-                  <p className="text-xs font-semibold text-gray-400 uppercase">Stats:</p>
-                  <div className="grid grid-cols-2 gap-1 mt-1">
-                    {pokemon.stats.map((s) => (
-                      <div key={s.stat.name} className="text-sm">
-                        <span className="text-gray-500 capitalize">{s.stat.name}: </span>
-                        <span className="font-medium">{s.base_stat}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 mt-2">{pokemon.url}</p>
-              )}
-            </div>
-          ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        {items.map((p) => (
+          <div key={p.name} className="p-4 border rounded bg-white shadow-sm">
+            <h3 className="font-bold capitalize">{p.name}</h3>
+            {p.stats ? (
+              <div className="text-sm grid grid-cols-2 mt-2">
+                {p.stats.map(s => <div key={s.stat.name}>{s.stat.name}: {s.base_stat}</div>)}
+              </div>
+            ) : <p className="text-xs text-gray-400">{p.url}</p>}
+          </div>
+        ))}
+      </div>
+
+      {!searchQuery && (
+        <div className="flex gap-4 mt-6 items-center">
+          <button onClick={() => setSearchParams({ page: String(page - 1) })} disabled={page === 1}>Prev</button>
+          <span>Page {page}</span>
+          <button onClick={() => setSearchParams({ page: String(page + 1) })}>Next</button>
         </div>
-      ) : (
-        <p>No results found</p>
       )}
     </div>
   );
