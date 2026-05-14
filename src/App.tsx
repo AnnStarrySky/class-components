@@ -13,9 +13,9 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route path="details/:id" element={<Details />} />
-            <Route path="*" element={<NotFound />} />
           </Route>
           <Route path="/about" element={<About />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>

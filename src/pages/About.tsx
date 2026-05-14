@@ -1,22 +1,30 @@
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-const About = () => {
+const About: React.FC = () => {
   return (
-    <div className="p-6 mx-auto text-center">
-      <Link to="/" className="text-blue-600 underline block mb-4">
-        ← Back to Home
-      </Link>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
+      <h1 className="text-4xl font-extrabold text-blue-600 mb-4">About App</h1>
+      <h2 className="text-xl font-bold text-gray-800 mb-2">Author: AnnStarrySky</h2>
+      
+      <p className="text-gray-600 mb-6 max-w-md">
+        This application is built as part of the{' '}
+        <a
+          href="https://rs.school/courses/reactjs"
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-500 hover:text-blue-600 underline font-medium"
+        >
+          RS School React Course
+        </a>
+      </p>
 
-      <h1 className="text-2xl font-bold mb-4">About App</h1>
-      <p className="mb-2">Author: AnnStarrySky</p>
-      <a
-        href="https://rs.school/courses/reactjs"
-        target="_blank"
-        rel="noreferrer"
-        className="text-blue-500 underline"
+      <Link 
+        to="/" 
+        className="px-6 py-3 bg-blue-500 text-white font-medium rounded shadow hover:bg-blue-600 transition-colors"
       >
-        RS School React Course
-      </a>
+        Back to Home
+      </Link>
     </div>
   );
 };
