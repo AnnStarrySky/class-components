@@ -4,6 +4,7 @@ import Layout from './components/Layout/Layout';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
+import Details from './components/Details/Details';
 
 const App: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
+            <Route path="details/:id" element={<Details />} />
             <Route path="about" element={<About />} />
             <Route path="*" element={<NotFound />} />
           </Route>

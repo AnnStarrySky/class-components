@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { fetchPokemons, fetchOnePokemon } from '../../api/pokemonApi';
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from "react-router-dom";
+
+import { fetchOnePokemon, fetchPokemons } from '../../api/pokemonApi';
 import type { Pokemon } from '../../api/pokemonApi';
-import { useSearchParams } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -35,29 +36,45 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
     load();
   }, [searchQuery, page]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className='mt-4'>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         {items.map((p) => (
-          <div key={p.name} className="p-4 border rounded bg-white shadow-sm">
+          <Link 
+            to={`/details/${p.name}`}
+            replace
+            key={p.name} 
+            className="p-4 border rounded bg-white shadow-sm block"
+          >
             <h3 className="font-bold capitalize">{p.name}</h3>
             {p.stats ? (
               <div className="text-sm grid grid-cols-2 mt-2">
                 {p.stats.map(s => <div key={s.stat.name}>{s.stat.name}: {s.base_stat}</div>)}
               </div>
             ) : <p className="text-xs text-gray-400">{p.url}</p>}
-          </div>
+          </Link>
         ))}
       </div>
 
       {!searchQuery && (
         <div className="flex gap-4 mt-6 items-center">
-          <button onClick={() => setSearchParams({ page: String(page - 1) })} disabled={page === 1}>Prev</button>
+          <button 
+            className="px-3 py-1 border disabled:opacity-50"
+            onClick={() => setSearchParams({ page: String(page - 1) })} 
+            disabled={page === 1}
+          >
+            Prev
+          </button>
           <span>Page {page}</span>
-          <button onClick={() => setSearchParams({ page: String(page + 1) })}>Next</button>
+          <button 
+            className="px-3 py-1 border"
+            onClick={() => setSearchParams({ page: String(page + 1) })}
+          >
+            Next
+          </button>
         </div>
       )}
     </div>
