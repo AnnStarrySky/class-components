@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const Search = ({ onSearch }: { onSearch: (v: string) => void }) => {
-  const [value, setValue] = useState(() => localStorage.getItem('searchQuery') || '');
+  const [value, setValue] = useLocalStorage('searchQuery', '');
 
   const handleAction = () => {
     const trimmed = value.trim();

@@ -1,13 +1,13 @@
-import { useState } from 'react';
 import { useSearchParams } from "react-router-dom";
 import Search from '../Search/Search';
 import Results from '../Results/Results';
 import ErrorSimulator from '../ErrorBoundary/ErrorSimulator';
 import { Outlet, useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const Layout = () => {
-  const [searchQuery, setSearchQuery] = useState(() => localStorage.getItem('searchQuery') || '');
+  const [searchQuery, setSearchQuery] = useLocalStorage('searchQuery', '');
   const [, setSearchParams] = useSearchParams();
 
   const handleSearch = (value: string) => {
