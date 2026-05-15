@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import Results from './Results';
 import { fetchPokemons, fetchOnePokemon } from '../../api/pokemonApi';
 import type { Mock } from 'vitest';
@@ -9,7 +10,11 @@ vi.mock('../../api/pokemonApi', () => ({
 }));
 
 test('shows loading state on initial render', () => {
-    render(<Results searchQuery="" />);
+    render(
+        <MemoryRouter>
+            <Results searchQuery="" />
+        </MemoryRouter>
+    );
 
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
 });
@@ -22,7 +27,11 @@ test('renders pokemon list after successful API call', async () => {
         ],
     });
 
-    render(<Results searchQuery="" />);
+    render(
+        <MemoryRouter>
+            <Results searchQuery="" />
+        </MemoryRouter>
+    );
 
     await waitFor(() => {
         expect(screen.getByText('pikachu')).toBeInTheDocument();
@@ -34,14 +43,18 @@ test('fetches and renders single pokemon when searchQuery is provided', async ()
     (fetchOnePokemon as Mock).mockResolvedValue({
         name: 'pikachu',
         stats: [
-        {
-            base_stat: 90,
-            stat: { name: 'speed' },
-        },
+            {
+                base_stat: 90,
+                stat: { name: 'speed' },
+            },
         ],
     });
 
-    render(<Results searchQuery="pikachu" />);
+    render(
+        <MemoryRouter>
+            <Results searchQuery="pikachu" />
+        </MemoryRouter>
+    );
 
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
     expect(await screen.findByText('pikachu')).toBeInTheDocument();
@@ -52,25 +65,37 @@ test('fetches and renders single pokemon when searchQuery is provided', async ()
 test('shows "no results found" when API returns empty list', async () => {
     (fetchPokemons as Mock).mockResolvedValue({});
 
-    render(<Results searchQuery="" />);
+    render(
+        <MemoryRouter>
+            <Results searchQuery="" />
+        </MemoryRouter>
+    );
     expect(await screen.findByText(/no results found/i)).toBeInTheDocument();
 });
 
 test('shows error message when API fails', async () => {
     (fetchPokemons as Mock).mockRejectedValue(new Error('API failed'));
 
-    render(<Results searchQuery="" />);
+    render(
+        <MemoryRouter>
+            <Results searchQuery="" />
+        </MemoryRouter>
+    );
     expect(await screen.findByText(/failed to load data/i)).toBeInTheDocument();
 }); 
 
 test('renders pokemon without stats (shows url fallback)', async () => {
     (fetchPokemons as Mock).mockResolvedValue({
         results: [
-        { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/25/' },
+            { name: 'pikachu', url: 'https://pokeapi.co' },
         ],
     });
 
-    render(<Results searchQuery="" />);
+    render(
+        <MemoryRouter>
+            <Results searchQuery="" />
+        </MemoryRouter>
+    );
 
     expect(await screen.findByText('pikachu')).toBeInTheDocument();
     expect(await screen.findByText(/pokeapi\.co/i)).toBeInTheDocument();
@@ -81,11 +106,19 @@ test('refetches data when searchQuery changes', async () => {
         .mockResolvedValueOnce({ name: 'pikachu' })
         .mockResolvedValueOnce({ name: 'charizard' });
 
-    const { rerender } = render(<Results searchQuery="pikachu" />);
+    const { rerender } = render(
+        <MemoryRouter initialEntries={['/?page=1']}>
+            <Results searchQuery="pikachu" />
+        </MemoryRouter>
+    );
 
     expect(await screen.findByText('pikachu')).toBeInTheDocument();
 
-    rerender(<Results searchQuery="charizard" />);
+    rerender(
+        <MemoryRouter initialEntries={['/?page=1']}>
+            <Results searchQuery="charizard" />
+        </MemoryRouter>
+    );
 
     expect(await screen.findByText('charizard')).toBeInTheDocument();
 });
@@ -93,7 +126,11 @@ test('refetches data when searchQuery changes', async () => {
 test('shows "Pokemon not found" when searching for non-existent pokemon', async () => {
     (fetchOnePokemon as Mock).mockRejectedValue(new Error('Not Found'));
 
-    render(<Results searchQuery="unknown-pokemon" />);
+    render(
+        <MemoryRouter>
+            <Results searchQuery="unknown-pokemon" />
+        </MemoryRouter>
+    );
 
     expect(await screen.findByText(/pokemon not found/i)).toBeInTheDocument();
 });

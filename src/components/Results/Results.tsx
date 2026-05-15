@@ -18,23 +18,40 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
     const load = async () => {
       setLoading(true);
       setError(null);
+
       try {
         if (searchQuery) {
           const data = await fetchOnePokemon(searchQuery);
+
           setItems([data]);
         } else {
-          const data = await fetchPokemons((page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
-          setItems(data.results);
+          const data = await fetchPokemons(
+            (page - 1) * ITEMS_PER_PAGE,
+            ITEMS_PER_PAGE
+          );
+
+          if (!data.results || data.results.length === 0) {
+            setItems([]);
+            setError("No results found");
+          } else {
+            setItems(data.results);
+          }
         }
       } catch {
         setItems([]);
-        setError("Nothing found");
+
+        if (searchQuery) {
+          setError("Pokemon not found");
+        } else {
+          setError("Failed to load data");
+        }
       } finally {
         setLoading(false);
       }
-    };
-    load();
-  }, [searchQuery, page]);
+  };
+
+  load();
+}, [searchQuery, page]);
 
   if (loading) return <p className='mt-4'>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
