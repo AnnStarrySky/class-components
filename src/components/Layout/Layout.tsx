@@ -5,6 +5,7 @@ import ErrorSimulator from '../ErrorBoundary/ErrorSimulator';
 import { Outlet, useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { usePokemonStore } from "../../store/usePokemonStore";
 
 const Layout = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage('searchQuery', '');
@@ -17,6 +18,14 @@ const Layout = () => {
 
   const location = useLocation();
   const isDetailsPage = location.pathname.startsWith('/details/');
+
+  const selectedPokemons = usePokemonStore(
+    (state) => state.selectedPokemons
+  );
+
+  const clearSelected = usePokemonStore(
+    (state) => state.clearSelected
+  );
 
   return (
     <div className="max-w-[1400px] mx-auto p-4 min-h-screen flex flex-col">
@@ -37,6 +46,22 @@ const Layout = () => {
           </div>
         )}
       </main>
+      {selectedPokemons.length > 0 && (
+      <div className="w-full border-t p-4 flex justify-center gap-8 items-center">
+        
+        <p>
+          Selected: {selectedPokemons.length}
+        </p>
+
+        <button
+          onClick={clearSelected}
+          className="px-3 py-1 bg-red-500 text-white rounded"
+        >
+          Unselect all
+        </button>
+
+      </div>
+      )}
     </div>
   );
 };
