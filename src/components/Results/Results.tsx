@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from "react-router-dom";
 
-import { fetchOnePokemon, fetchPokemons } from '../../api/pokemonApi';
-import type { Pokemon } from '../../api/pokemonApi';
+import { fetchOnePokemon, fetchPokemons, type Pokemon } from '../../api/pokemonApi';
 
 const ITEMS_PER_PAGE = 10;
 
