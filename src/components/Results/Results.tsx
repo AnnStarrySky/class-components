@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from "react-router-dom";
 
 import { fetchOnePokemon, fetchPokemons, type Pokemon } from '../../api/pokemonApi';
-
+import { usePokemonStore } from '../../store/usePokemonStore';
 const ITEMS_PER_PAGE = 10;
 
 const Results = ({ searchQuery }: { searchQuery: string }) => {
@@ -10,6 +10,14 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedPokemons = usePokemonStore(
+    (state) => state.selectedPokemons
+  );
+
+  const togglePokemon = usePokemonStore(
+  (state) => state.togglePokemon
+);
   
   const page = parseInt(searchParams.get("page") || "1");
 
@@ -65,6 +73,12 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
             key={p.name} 
             className="p-4 border rounded bg-white shadow-sm block"
           >
+            <input
+              type="checkbox"
+              checked={selectedPokemons.includes(p.name)}
+              onChange={() => togglePokemon(p.name)}
+              onClick={(e) => e.stopPropagation()}
+            />
             <h3 className="font-bold capitalize">{p.name}</h3>
             {p.stats ? (
               <div className="text-sm grid grid-cols-2 mt-2">
