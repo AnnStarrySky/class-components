@@ -27,6 +27,36 @@ const Layout = () => {
     (state) => state.clearSelected
   );
 
+  const handleDownload = () => {
+    const csvContent = [
+      "Name,Details URL",
+      ...selectedPokemons.map(
+        (pokemon) =>
+          `${pokemon}, /details/${pokemon}`
+      ),
+    ].join("\n");
+
+    const blob = new Blob(
+      [csvContent],
+      {
+        type: "text/csv",
+      }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+      `${selectedPokemons.length}_items.csv`;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="max-w-[1400px] mx-auto p-4 min-h-screen flex flex-col">
       <header className="bg-gray-100 p-4 mb-4">
@@ -60,6 +90,12 @@ const Layout = () => {
           Unselect all
         </button>
 
+        <button
+          onClick={handleDownload}
+          className="px-3 py-1 bg-blue-500 text-white rounded"
+        >
+          Download
+        </button>
       </div>
       )}
     </div>
