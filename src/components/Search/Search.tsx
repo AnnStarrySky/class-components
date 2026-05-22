@@ -4,7 +4,7 @@ const Search = ({ onSearch }: { onSearch: (v: string) => void }) => {
   const [value, setValue] = useLocalStorage('searchQuery', '');
 
   const handleAction = () => {
-    onSearch(value.trim());
+    onSearch(value);
   };
 
   return (

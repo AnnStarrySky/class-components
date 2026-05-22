@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { fetchOnePokemon, fetchPokemons, type Pokemon } from '../../api/pokemonApi';
 import { usePokemonStore } from '../../store/usePokemonStore';
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 8;
 
 const Results = ({ searchQuery }: { searchQuery: string }) => {
   const [items, setItems] = useState<Pokemon[]>([]);
@@ -71,7 +71,7 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
             to={`/details/${p.name}`}
             replace
             key={p.name} 
-            className="p-4 border rounded bg-white shadow-sm block"
+            className="p-4 border rounded bg-white shadow-sm block dark:bg-gray-700 dark:text-white"
           >
             <input
               type="checkbox"
