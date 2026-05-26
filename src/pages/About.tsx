@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const About: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6 text-center dark:bg-gray-900 dark:text-white">
       <h1 className="text-4xl font-extrabold text-blue-600 mb-4">About App</h1>
       <h2 className="text-xl font-bold text-gray-800 mb-2">Author: AnnStarrySky</h2>
       

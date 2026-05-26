@@ -6,8 +6,9 @@ export function useLocalStorage(key: string, initialValue: string) {
   });
 
   const setValue = (value: string) => {
-    setStoredValue(value);
-    localStorage.setItem(key, value);
+    const trimmed = value.trim();
+    setStoredValue(trimmed);
+    localStorage.setItem(key, trimmed);
   };
 
   return [storedValue, setValue] as const;
