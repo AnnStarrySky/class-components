@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import { fetchOnePokemon, fetchPokemons, type Pokemon } from '../../api/pokemonApi';
 import { usePokemonStore } from '../../store/usePokemonStore';
-const ITEMS_PER_PAGE = 8;
+import { ITEMS_PER_PAGE } from '../../constants/paginationNumber';
 
 const Results = ({ searchQuery }: { searchQuery: string }) => {
   const [items, setItems] = useState<Pokemon[]>([]);
