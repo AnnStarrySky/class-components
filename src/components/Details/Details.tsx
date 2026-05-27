@@ -53,7 +53,7 @@ const Details = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="sticky p-4">
       <Link 
         to="/" 
         className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm dark:bg-gray-700 dark:text-white"

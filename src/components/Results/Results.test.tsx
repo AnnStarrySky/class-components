@@ -3,13 +3,16 @@ import { MemoryRouter } from 'react-router-dom';
 import Results from './Results';
 import { fetchPokemons, fetchOnePokemon } from '../../api/pokemonApi';
 import type { Mock } from 'vitest';
+import { waitForElementToBeRemoved } from '@testing-library/react';
 
 vi.mock('../../api/pokemonApi', () => ({
     fetchPokemons: vi.fn(),
     fetchOnePokemon: vi.fn(),
 }));
 
-test('shows loading state on initial render', () => {
+test('shows loading state on initial render', async () => {
+    (fetchPokemons as Mock).mockResolvedValue({ results: [] });
+
     render(
         <MemoryRouter>
             <Results searchQuery="" />
@@ -17,6 +20,7 @@ test('shows loading state on initial render', () => {
     );
 
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
 });
 
 test('renders pokemon list after successful API call', async () => {
