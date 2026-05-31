@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Details from './Details';
 import { fetchOnePokemon } from '../../api/pokemonApi';
 import type { Mock } from 'vitest';
+import { renderWithQuery } from '../../test-utils';
 
 vi.mock('../../api/pokemonApi', () => ({
     fetchOnePokemon: vi.fn(),
@@ -19,7 +20,7 @@ test('shows loading and renders data', async () => {
         ],
     });
 
-    render(
+    renderWithQuery(
         <MemoryRouter initialEntries={['/details/pikachu']}>
             <Routes>
                 <Route
@@ -39,7 +40,7 @@ test('shows loading and renders data', async () => {
 test('shows error', async () => {
     (fetchOnePokemon as Mock).mockRejectedValue(new Error('error'));
 
-    render(
+    renderWithQuery(
         <MemoryRouter initialEntries={['/details/pikachu']}>
             <Routes>
                 <Route

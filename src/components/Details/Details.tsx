@@ -1,25 +1,44 @@
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import { fetchOnePokemon } from "../../api/pokemonApi";
-import { Link } from "react-router-dom";
 
 const Details = () => {
-  const { id = "" } = useParams();
+  const { id } = useParams();
 
-  const { data: pokemon, isLoading, error } = useQuery({
+  const {data: pokemon, isLoading, isError} = useQuery({
     queryKey: ["pokemon", id],
-    queryFn: () => fetchOnePokemon(id),
+    queryFn: () => fetchOnePokemon(id!),
+    enabled: !!id,
   });
 
-  if (isLoading) return <div className="p-4"><p>Loading details...</p></div>;
-  if (error) return <div className="p-4"><p className="text-red-500">Failed to load pokemon</p></div>;
-  if (!pokemon) return null;
+  if (isLoading) {
+    return (
+      <div className="p-4">
+        <p>Loading details...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="p-4">
+        <p className="text-red-500">
+          Failed to load pokemon
+        </p>
+      </div>
+    );
+  }
+
+  if (!pokemon) {
+    return null;
+  }
 
   return (
-    <div className="sticky p-4">
-      <Link 
-        to="/" 
+    <div className="p-4">
+      <Link
+        to="/"
         className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded text-sm dark:bg-gray-700 dark:text-white"
       >
         ✕ Close
