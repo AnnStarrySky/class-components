@@ -2,11 +2,9 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchOnePokemon } from "../../api/pokemonApi";
-import { useQueryClient } from "@tanstack/react-query";
 
 const Details = () => {
   const { id } = useParams();
-  const queryClient = useQueryClient();
 
   const {data: pokemon, isLoading, isError} = useQuery({
     queryKey: ["pokemon", id],
@@ -35,11 +33,7 @@ const Details = () => {
   if (!pokemon) {
     return null;
   }
-  const handleRefresh = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["pokemon", id],
-    });
-  };
+  
   return (
     <div className="p-4">
       <Link
@@ -48,12 +42,6 @@ const Details = () => {
       >
         ✕ Close
       </Link>
-      <button
-        onClick={handleRefresh}
-        className="px-3 py-1 bg-blue-200 hover:bg-blue-300 rounded text-sm ml-2"
-      >
-        Refresh
-      </button>
 
       <h2 className="text-3xl font-bold capitalize mb-4 mt-4">
         {pokemon.name}
