@@ -6,6 +6,7 @@ export const renderWithQuery = (ui: React.ReactElement) => {
     defaultOptions: {
       queries: {
         retry: false,
+        gcTime: 0
       },
     },
   });
