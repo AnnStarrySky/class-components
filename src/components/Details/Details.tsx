@@ -1,56 +1,20 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
 import { fetchOnePokemon } from "../../api/pokemonApi";
-import type { Pokemon } from "../../api/pokemonApi";
 import { Link } from "react-router-dom";
 
 const Details = () => {
-  const { id } = useParams();
+  const { id = "" } = useParams();
 
-  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: pokemon, isLoading, error } = useQuery({
+    queryKey: ["pokemon", id],
+    queryFn: () => fetchOnePokemon(id),
+  });
 
-  useEffect(() => {
-    if (!id) return;
-
-    const loadPokemon = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const data = await fetchOnePokemon(id);
-        setPokemon(data);
-      } catch {
-        setError("Failed to load pokemon");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPokemon();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="p-4">
-        <p>Loading details...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
-
-  if (!pokemon) {
-    return null;
-  }
+  if (isLoading) return <div className="p-4"><p>Loading details...</p></div>;
+  if (error) return <div className="p-4"><p className="text-red-500">Failed to load pokemon</p></div>;
+  if (!pokemon) return null;
 
   return (
     <div className="sticky p-4">

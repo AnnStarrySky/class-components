@@ -8,7 +8,11 @@ export type Pokemon = {
   stats?: { base_stat: number; stat: { name: string } }[];
 }
 
-export const fetchPokemons = async (offset = 0, limit = ITEMS_PER_PAGE) => {
+export type PokemonListResponse = {
+  results: Pokemon[];
+};
+
+export const fetchPokemons = async (offset = 0, limit = ITEMS_PER_PAGE): Promise<PokemonListResponse> => {
   const res = await fetch(`${BASE_URL}?limit=${limit}&offset=${offset}`);
   if (!res.ok) throw new Error('Error loading');
   return res.json();

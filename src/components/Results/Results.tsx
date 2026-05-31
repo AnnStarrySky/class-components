@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
-import { fetchOnePokemon, fetchPokemons, type Pokemon } from '../../api/pokemonApi';
-import { usePokemonStore } from '../../store/usePokemonStore';
-import { ITEMS_PER_PAGE } from '../../constants/paginationNumber';
+import { fetchPokemons } from "../../api/pokemonApi";
+import { usePokemonStore } from "../../store/usePokemonStore";
+import { ITEMS_PER_PAGE } from "../../constants/paginationNumber";
 
 const Results = ({ searchQuery }: { searchQuery: string }) => {
-  const [items, setItems] = useState<Pokemon[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedPokemons = usePokemonStore(
@@ -16,61 +13,31 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
   );
 
   const togglePokemon = usePokemonStore(
-  (state) => state.togglePokemon
-);
-  
+    (state) => state.togglePokemon
+  );
+
   const page = parseInt(searchParams.get("page") || "1");
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["pokemons", page],
+    queryFn: () =>
+      fetchPokemons(
+        (page - 1) * ITEMS_PER_PAGE,
+        ITEMS_PER_PAGE
+      ),
+  });
 
-      try {
-        if (searchQuery) {
-          const data = await fetchOnePokemon(searchQuery);
-
-          setItems([data]);
-        } else {
-          const data = await fetchPokemons(
-            (page - 1) * ITEMS_PER_PAGE,
-            ITEMS_PER_PAGE
-          );
-
-          if (!data.results || data.results.length === 0) {
-            setItems([]);
-            setError("No results found");
-          } else {
-            setItems(data.results);
-          }
-        }
-      } catch {
-        setItems([]);
-
-        if (searchQuery) {
-          setError("Pokemon not found");
-        } else {
-          setError("Failed to load data");
-        }
-      } finally {
-        setLoading(false);
-      }
-  };
-
-  load();
-}, [searchQuery, page]);
-
-  if (loading) return <p className='mt-4'>Loading...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (isLoading) return <p className="mt-4">Loading...</p>;
+  if (error) return <p className="text-red-500">Failed to load pokemons</p>;
 
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        {items.map((p) => (
-          <Link 
+        {data?.results?.map((p) => (
+          <Link
+            key={p.name}
             to={`/details/${p.name}`}
             replace
-            key={p.name} 
             className="p-4 border rounded bg-white shadow-sm block dark:bg-gray-700 dark:text-white"
           >
             <input
@@ -79,29 +46,33 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
               onChange={() => togglePokemon(p.name)}
               onClick={(e) => e.stopPropagation()}
             />
+
             <h3 className="font-bold capitalize">{p.name}</h3>
-            {p.stats ? (
-              <div className="text-sm grid grid-cols-2 mt-2">
-                {p.stats.map(s => <div key={s.stat.name}>{s.stat.name}: {s.base_stat}</div>)}
-              </div>
-            ) : <p className="text-xs text-gray-400">{p.url}</p>}
+
+            <p className="text-xs text-gray-400">{p.url}</p>
           </Link>
         ))}
       </div>
 
       {!searchQuery && (
         <div className="flex gap-4 mt-6 items-center">
-          <button 
+          <button
             className="px-3 py-1 border disabled:opacity-50"
-            onClick={() => setSearchParams({ page: String(page - 1) })} 
+            onClick={() =>
+              setSearchParams({ page: String(page - 1) })
+            }
             disabled={page === 1}
           >
             Prev
           </button>
+
           <span>Page {page}</span>
-          <button 
+
+          <button
             className="px-3 py-1 border"
-            onClick={() => setSearchParams({ page: String(page + 1) })}
+            onClick={() =>
+              setSearchParams({ page: String(page + 1) })
+            }
           >
             Next
           </button>
