@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useSearchParams } from "react-router-dom";
 
 import { fetchOnePokemon, fetchPokemons, type Pokemon } from '../../api/pokemonApi';
@@ -6,9 +6,6 @@ import { usePokemonStore } from '../../store/usePokemonStore';
 import { ITEMS_PER_PAGE } from '../../constants/paginationNumber';
 
 const Results = ({ searchQuery }: { searchQuery: string }) => {
-  const [items, setItems] = useState<Pokemon[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const selectedPokemons = usePokemonStore(
@@ -16,61 +13,56 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
   );
 
   const togglePokemon = usePokemonStore(
-  (state) => state.togglePokemon
-);
-  
+    (state) => state.togglePokemon
+  );
+
   const page = parseInt(searchParams.get("page") || "1");
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        if (searchQuery) {
-          const data = await fetchOnePokemon(searchQuery);
-
-          setItems([data]);
-        } else {
-          const data = await fetchPokemons(
-            (page - 1) * ITEMS_PER_PAGE,
-            ITEMS_PER_PAGE
-          );
-
-          if (!data.results || data.results.length === 0) {
-            setItems([]);
-            setError("No results found");
-          } else {
-            setItems(data.results);
-          }
-        }
-      } catch {
-        setItems([]);
-
-        if (searchQuery) {
-          setError("Pokemon not found");
-        } else {
-          setError("Failed to load data");
-        }
-      } finally {
-        setLoading(false);
+  const {data: items = [], isLoading, isError} = useQuery<Pokemon[]>({
+    queryKey: ['pokemons', page, searchQuery],
+    queryFn: async () => {
+      if (searchQuery) {
+        const data = await fetchOnePokemon(searchQuery);
+        return [data];
       }
-  };
 
-  load();
-}, [searchQuery, page]);
+      const data = await fetchPokemons(
+        (page - 1) * ITEMS_PER_PAGE,
+        ITEMS_PER_PAGE
+      );
 
-  if (loading) return <p className='mt-4'>Loading...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+      return data.results ?? [];
+    },
+  });
+
+  if (isLoading) {
+    return <p className="mt-4">Loading...</p>;
+  }
+
+  if (isError) {
+  return (
+    <p className="text-red-500">
+      {searchQuery ? "Pokemon not found" : "Failed to load data"}
+    </p>
+  );
+}
+
+  if (!searchQuery && items.length === 0) {
+    return (
+      <p className="text-red-500">
+        No results found
+      </p>
+    );
+  }
 
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         {items.map((p) => (
-          <Link 
+          <Link
             to={`/details/${p.name}`}
             replace
-            key={p.name} 
+            key={p.name}
             className="p-4 border rounded bg-white shadow-sm block dark:bg-gray-700 dark:text-white"
           >
             <input
@@ -80,28 +72,43 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
               onClick={(e) => e.stopPropagation()}
             />
             <h3 className="font-bold capitalize">{p.name}</h3>
+
             {p.stats ? (
               <div className="text-sm grid grid-cols-2 mt-2">
-                {p.stats.map(s => <div key={s.stat.name}>{s.stat.name}: {s.base_stat}</div>)}
+                {p.stats.map((s) => (
+                  <div key={s.stat.name}>
+                    {s.stat.name}: {s.base_stat}
+                  </div>
+                ))}
               </div>
-            ) : <p className="text-xs text-gray-400">{p.url}</p>}
+            ) : (
+              <p className="text-xs text-gray-400">
+                {p.url}
+              </p>
+            )}
           </Link>
         ))}
       </div>
 
       {!searchQuery && (
         <div className="flex gap-4 mt-6 items-center">
-          <button 
+          <button
             className="px-3 py-1 border disabled:opacity-50"
-            onClick={() => setSearchParams({ page: String(page - 1) })} 
+            onClick={() =>
+              setSearchParams({ page: String(page - 1) })
+            }
             disabled={page === 1}
           >
             Prev
           </button>
+
           <span>Page {page}</span>
-          <button 
+
+          <button
             className="px-3 py-1 border"
-            onClick={() => setSearchParams({ page: String(page + 1) })}
+            onClick={() =>
+              setSearchParams({ page: String(page + 1) })
+            }
           >
             Next
           </button>

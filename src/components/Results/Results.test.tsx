@@ -1,22 +1,27 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Results from './Results';
 import { fetchPokemons, fetchOnePokemon } from '../../api/pokemonApi';
 import type { Mock } from 'vitest';
+import { waitForElementToBeRemoved } from '@testing-library/react';
+import { renderWithQuery } from '../../test-utils';
 
 vi.mock('../../api/pokemonApi', () => ({
     fetchPokemons: vi.fn(),
     fetchOnePokemon: vi.fn(),
 }));
 
-test('shows loading state on initial render', () => {
-    render(
+test('shows loading state on initial render', async () => {
+    (fetchPokemons as Mock).mockResolvedValue({ results: [] });
+
+    renderWithQuery(
         <MemoryRouter>
             <Results searchQuery="" />
         </MemoryRouter>
     );
 
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
 });
 
 test('renders pokemon list after successful API call', async () => {
@@ -27,7 +32,7 @@ test('renders pokemon list after successful API call', async () => {
         ],
     });
 
-    render(
+    renderWithQuery(
         <MemoryRouter>
             <Results searchQuery="" />
         </MemoryRouter>
@@ -50,7 +55,7 @@ test('fetches and renders single pokemon when searchQuery is provided', async ()
         ],
     });
 
-    render(
+    renderWithQuery(
         <MemoryRouter>
             <Results searchQuery="pikachu" />
         </MemoryRouter>
@@ -63,9 +68,9 @@ test('fetches and renders single pokemon when searchQuery is provided', async ()
 });    
 
 test('shows "no results found" when API returns empty list', async () => {
-    (fetchPokemons as Mock).mockResolvedValue({});
+    (fetchPokemons as Mock).mockResolvedValue({ results: [] });;
 
-    render(
+    renderWithQuery(
         <MemoryRouter>
             <Results searchQuery="" />
         </MemoryRouter>
@@ -76,7 +81,7 @@ test('shows "no results found" when API returns empty list', async () => {
 test('shows error message when API fails', async () => {
     (fetchPokemons as Mock).mockRejectedValue(new Error('API failed'));
 
-    render(
+    renderWithQuery(
         <MemoryRouter>
             <Results searchQuery="" />
         </MemoryRouter>
@@ -91,7 +96,7 @@ test('renders pokemon without stats (shows url fallback)', async () => {
         ],
     });
 
-    render(
+    renderWithQuery(
         <MemoryRouter>
             <Results searchQuery="" />
         </MemoryRouter>
@@ -106,16 +111,18 @@ test('refetches data when searchQuery changes', async () => {
         .mockResolvedValueOnce({ name: 'pikachu' })
         .mockResolvedValueOnce({ name: 'charizard' });
 
-    const { rerender } = render(
-        <MemoryRouter initialEntries={['/?page=1']}>
+    const { unmount } = renderWithQuery(
+        <MemoryRouter>
             <Results searchQuery="pikachu" />
         </MemoryRouter>
     );
 
     expect(await screen.findByText('pikachu')).toBeInTheDocument();
 
-    rerender(
-        <MemoryRouter initialEntries={['/?page=1']}>
+    unmount();
+
+    renderWithQuery(
+        <MemoryRouter>
             <Results searchQuery="charizard" />
         </MemoryRouter>
     );
@@ -126,7 +133,7 @@ test('refetches data when searchQuery changes', async () => {
 test('shows "Pokemon not found" when searching for non-existent pokemon', async () => {
     (fetchOnePokemon as Mock).mockRejectedValue(new Error('Not Found'));
 
-    render(
+    renderWithQuery(
         <MemoryRouter>
             <Results searchQuery="unknown-pokemon" />
         </MemoryRouter>

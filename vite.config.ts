@@ -11,6 +11,14 @@ export default defineConfig({
     setupFiles: './src/setupTests.ts',
     coverage: {
       reporter: ['text', 'html'],
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{js,jsx,ts,tsx}',
+        'src/**/*.spec.{js,jsx,ts,tsx}',
+        'src/index.{js,jsx,ts,tsx}',
+        'src/setupTests.{js,ts}',
+        'src/**/*.d.ts',
+      ],
       thresholds: {
         statements: 80,
         branches: 50,

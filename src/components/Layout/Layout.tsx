@@ -7,10 +7,12 @@ import { Link } from 'react-router-dom';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { usePokemonStore } from "../../store/usePokemonStore";
 import ThemeToggler from "../ThemeToggler/ThemeToggler";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Layout = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage('searchQuery', '');
   const [, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
@@ -58,11 +60,21 @@ const Layout = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleRefresh = () => {
+    queryClient.invalidateQueries();
+  };
+
   return (
     <div className="max-w-[1400px] mx-auto p-4 min-h-screen flex flex-col dark:bg-gray-900 dark:text-white">
       <header className="bg-gray-100 p-4 mb-4 dark:bg-gray-700 dark:text-white">
         <Search onSearch={handleSearch}/>
         <ThemeToggler />
+        <button
+          onClick={handleRefresh}
+          className="bg-green-500 text-white px-3 py-1 ml-4"
+        >
+          Refresh
+        </button>
       </header>
       <Link to="/about" className="bg-blue-500 text-white px-2 py-2 w-fit">
           About
