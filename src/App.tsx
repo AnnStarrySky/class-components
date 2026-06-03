@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import './App.css'
 import { Modal } from './components/Modal/Modal';
+import type { FormValues } from './types/form';
+import { UncontrolledForm } from './components/UncontrolledForm/UncontrolledForm';
 
 function App() {
   const [isUncontrolledOpen, setIsUncontrolledOpen] = useState(false);
   const [isHookFormOpen, setIsHookFormOpen] = useState(false);
+
+  const [history, setHistory] = useState<FormValues[]>([]);
+
+  const handleUncontrolledSubmit = (data: FormValues) => {
+      setHistory((prev) => [...prev, data]);
+      setIsUncontrolledOpen(false); 
+  };
 
   return (
     <main>
@@ -21,6 +30,7 @@ function App() {
       {isUncontrolledOpen && (
         <Modal onClose={() => setIsUncontrolledOpen(false)}>
           <h2>Uncontrolled Form</h2>
+          <UncontrolledForm onSubmit={handleUncontrolledSubmit} />
         </Modal>
       )}
 
@@ -29,6 +39,13 @@ function App() {
           <h2>React Hook Form</h2>
         </Modal>
       )}
+      <div className='mt-4'>
+        {history.map((item, index) => (
+          <div key={index}>
+            {item.name} - {item.email} - {item.age}
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
