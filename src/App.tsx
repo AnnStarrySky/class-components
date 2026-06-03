@@ -1,58 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useState } from 'react';
 import './App.css'
+import { Modal } from './components/Modal/Modal';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isUncontrolledOpen, setIsUncontrolledOpen] = useState(false);
+  const [isHookFormOpen, setIsHookFormOpen] = useState(false);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main>
+      <h1>React Forms</h1>
 
-      <div className="ticks"></div>
+      <button type="button" className="btn mr-5" onClick={() => setIsUncontrolledOpen(true)}>
+        Open Uncontrolled Form
+      </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-        </div>
-      </section>
+      <button type="button" className="btn" onClick={() => setIsHookFormOpen(true)}>
+        Open React Hook Form
+      </button>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {isUncontrolledOpen && (
+        <Modal onClose={() => setIsUncontrolledOpen(false)}>
+          <h2>Uncontrolled Form</h2>
+        </Modal>
+      )}
+
+      {isHookFormOpen && (
+        <Modal onClose={() => setIsHookFormOpen(false)}>
+          <h2>React Hook Form</h2>
+        </Modal>
+      )}
+    </main>
+  );
 }
 
-export default App
+export default App;
