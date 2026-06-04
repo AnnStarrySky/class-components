@@ -1,4 +1,4 @@
-import type { FormValues } from "../../types/form";
+import type { FormValues } from "../../validation/formSchema";
 
 type Props = {
   onSubmit: (data: FormValues ) => void;
@@ -13,7 +13,7 @@ export function UncontrolledForm({ onSubmit }: Props) {
         const data: FormValues = {
             name: String(formData.get("name") ?? ""),
             email: String(formData.get("email") ?? ""),
-            age: String(formData.get("age") ?? ""),
+            age: Number(formData.get("age") ?? ""),
         };
         onSubmit(data);
     };
