@@ -3,6 +3,7 @@ import './App.css'
 import { Modal } from './components/Modal/Modal';
 import type { FormValues } from './types/form';
 import { UncontrolledForm } from './components/UncontrolledForm/UncontrolledForm';
+import { ReactHookForm } from "./components/ReactHookForm/ReactHookForm";
 
 function App() {
   const [isUncontrolledOpen, setIsUncontrolledOpen] = useState(false);
@@ -13,6 +14,11 @@ function App() {
   const handleUncontrolledSubmit = (data: FormValues) => {
       setHistory((prev) => [...prev, data]);
       setIsUncontrolledOpen(false); 
+  };
+
+  const handleHookFormSubmit = (data: FormValues) => {
+      setHistory((prev) => [...prev, data]);
+      setIsHookFormOpen(false); 
   };
 
   return (
@@ -37,6 +43,7 @@ function App() {
       {isHookFormOpen && (
         <Modal onClose={() => setIsHookFormOpen(false)}>
           <h2>React Hook Form</h2>
+          <ReactHookForm onSubmit={handleHookFormSubmit} />
         </Modal>
       )}
       <div className='mt-4'>
