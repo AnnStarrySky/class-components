@@ -11,9 +11,10 @@ export function ReactHookForm({ onSubmit }: Props) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
   });
 
   return (
@@ -27,7 +28,7 @@ export function ReactHookForm({ onSubmit }: Props) {
       <input className="form-input" type="number" placeholder="Age"  {...register("age", { valueAsNumber: true })} />
       {errors.age && <p>{errors.age.message}</p>}
 
-      <button className="btn" type="submit">
+      <button className="btn" type="submit" disabled={!isValid}>
         Send
       </button>
     </form>

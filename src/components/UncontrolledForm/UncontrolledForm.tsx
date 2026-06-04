@@ -13,7 +13,7 @@ export function UncontrolledForm({ onSubmit }: Props) {
         const data: FormValues = {
             name: String(formData.get("name") ?? ""),
             email: String(formData.get("email") ?? ""),
-            age: Number(formData.get("age") ?? ""),
+            age: Number(formData.get("age") ?? 0),
         };
         onSubmit(data);
     };
