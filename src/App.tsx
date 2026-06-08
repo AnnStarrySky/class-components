@@ -4,20 +4,22 @@ import { Modal } from './components/Modal/Modal';
 import type { FormValues } from './validation/formSchema';
 import { UncontrolledForm } from './components/UncontrolledForm/UncontrolledForm';
 import { ReactHookForm } from "./components/ReactHookForm/ReactHookForm";
+import { useFormStore } from "./store/formStore";
 
 function App() {
   const [isUncontrolledOpen, setIsUncontrolledOpen] = useState(false);
   const [isHookFormOpen, setIsHookFormOpen] = useState(false);
 
-  const [history, setHistory] = useState<FormValues[]>([]);
+  const history = useFormStore((state) => state.history);
+  const addToHistory = useFormStore((state) => state.addToHistory);
 
   const handleUncontrolledSubmit = (data: FormValues) => {
-      setHistory((prev) => [...prev, data]);
+      addToHistory(data);
       setIsUncontrolledOpen(false); 
   };
 
   const handleHookFormSubmit = (data: FormValues) => {
-      setHistory((prev) => [...prev, data]);
+      addToHistory(data);
       setIsHookFormOpen(false); 
   };
 
