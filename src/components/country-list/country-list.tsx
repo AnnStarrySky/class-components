@@ -1,6 +1,7 @@
 import type { Country } from '../../types';
 import { CountryCard } from '../country-card/country-card';
 import { getPopulationForYear, createYearDataMap } from '../../utils/data-transformers';
+import { useMemo } from 'react';
 
 import styles from './country-list.module.css';
 
@@ -24,7 +25,17 @@ export const CountryList = ({
   sortField,
   sortOrder,
 }: CountryListProps) => {
-  const filteredCountries = countries
+  const yearMaps = useMemo(() => {
+    return new Map(
+      countries.map((country) => [
+        country.id,
+        createYearDataMap(country.data),
+      ])
+    );
+  }, [countries]);
+
+  const filteredCountries = useMemo(() => {
+    return countries
     .filter((c) => {
       const matchesSearch = c.id.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesRegion = !selectedRegion || c.data.some((d) => d.region === selectedRegion);
@@ -34,17 +45,17 @@ export const CountryList = ({
       if (sortField === 'name') {
         return sortOrder === 'asc' ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
       } else {
-        const popA = getPopulationForYear(createYearDataMap(a.data), selectedYear) || 0;
-        const popB = getPopulationForYear(createYearDataMap(b.data), selectedYear) || 0;
+        const popA = getPopulationForYear(yearMaps.get(a.id)!, selectedYear) || 0;
+        const popB = getPopulationForYear(yearMaps.get(b.id)!, selectedYear) || 0;
         return sortOrder === 'asc' ? popA - popB : popB - popA;
       }
     });
-
+  }, [countries, searchQuery, selectedRegion, sortField, sortOrder, selectedYear, yearMaps]);
   return (
     <div className={styles.countryList}>
-      {filteredCountries.map((country, index) => (
+      {filteredCountries.map((country) => (
         <CountryCard
-          key={index}
+          key={country.id}
           country={country}
           selectedYear={selectedYear}
           selectedColumns={selectedColumns}
