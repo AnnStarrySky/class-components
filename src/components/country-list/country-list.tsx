@@ -2,6 +2,7 @@ import type { Country } from '../../types';
 import { CountryCard } from '../country-card/country-card';
 import { getPopulationForYear, createYearDataMap } from '../../utils/data-transformers';
 import { useMemo } from 'react';
+import { List, type RowComponentProps} from 'react-window';
 
 import styles from './country-list.module.css';
 
@@ -35,9 +36,10 @@ export const CountryList = ({
   }, [countries]);
 
   const filteredCountries = useMemo(() => {
+    const normalizedSearch = searchQuery.toLowerCase().trim();
     return countries
     .filter((c) => {
-      const matchesSearch = c.id.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = !normalizedSearch || c.id.toLowerCase().includes(normalizedSearch);
       const matchesRegion = !selectedRegion || c.data.some((d) => d.region === selectedRegion);
       return matchesSearch && matchesRegion;
     })
@@ -51,16 +53,29 @@ export const CountryList = ({
       }
     });
   }, [countries, searchQuery, selectedRegion, sortField, sortOrder, selectedYear, yearMaps]);
-  return (
-    <div className={styles.countryList}>
-      {filteredCountries.map((country) => (
+
+  const Row = ({ index, style }: RowComponentProps) => {
+    const country = filteredCountries[index];
+    return (
+      <div style={style}>
         <CountryCard
           key={country.id}
           country={country}
           selectedYear={selectedYear}
           selectedColumns={selectedColumns}
         />
-      ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className={styles.countryList} >
+      <List
+        rowCount={filteredCountries.length}
+        rowHeight={300}
+        rowComponent={Row}
+        rowProps={{}}
+      />
     </div>
   );
 };
