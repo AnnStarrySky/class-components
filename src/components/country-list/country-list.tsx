@@ -26,15 +26,6 @@ export const CountryList = ({
   sortField,
   sortOrder,
 }: CountryListProps) => {
-  const yearMaps = useMemo(() => {
-    return new Map(
-      countries.map((country) => [
-        country.id,
-        createYearDataMap(country.data),
-      ])
-    );
-  }, [countries]);
-
   const filteredCountries = useMemo(() => {
     const normalizedSearch = searchQuery.toLowerCase().trim();
     return countries
@@ -47,12 +38,12 @@ export const CountryList = ({
       if (sortField === 'name') {
         return sortOrder === 'asc' ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
       } else {
-        const popA = getPopulationForYear(yearMaps.get(a.id)!, selectedYear) || 0;
-        const popB = getPopulationForYear(yearMaps.get(b.id)!, selectedYear) || 0;
+        const popA = getPopulationForYear(createYearDataMap(a.data), selectedYear) || 0;
+        const popB = getPopulationForYear(createYearDataMap(b.data), selectedYear) || 0;
         return sortOrder === 'asc' ? popA - popB : popB - popA;
       }
     });
-  }, [countries, searchQuery, selectedRegion, sortField, sortOrder, selectedYear, yearMaps]);
+  }, [countries, searchQuery, selectedRegion, sortField, sortOrder, selectedYear]);
 
   const Row = ({ index, style }: RowComponentProps) => {
     const country = filteredCountries[index];
@@ -71,6 +62,7 @@ export const CountryList = ({
   return (
     <div className={styles.countryList} >
       <List
+        style={{ height: 1000 }}
         rowCount={filteredCountries.length}
         rowHeight={300}
         rowComponent={Row}
