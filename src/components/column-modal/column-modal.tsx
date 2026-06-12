@@ -1,4 +1,5 @@
 import styles from './column-modal.module.css';
+import { useMemo } from 'react';
 
 type ColumnModalProps = {
   isOpen: boolean;
@@ -15,6 +16,11 @@ export const ColumnModal = ({
   onToggle,
   onClose,
 }: ColumnModalProps) => {
+
+  const selectedColumnsSet = useMemo(() => {
+  return new Set(selectedColumns);
+}, [selectedColumns]);
+
   if (!isOpen) {
     return null;
   }
@@ -29,7 +35,7 @@ export const ColumnModal = ({
               <label>
                 <input
                   type="checkbox"
-                  checked={selectedColumns.includes(column)}
+                  checked={selectedColumnsSet.has(column)}
                   onChange={() => onToggle(column)}
                   className={styles.checkbox}
                 />
