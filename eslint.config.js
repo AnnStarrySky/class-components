@@ -31,6 +31,7 @@ export default defineConfig([
     rules: {
       "react/jsx-no-target-blank": "error",
       "@typescript-eslint/no-explicit-any": "error",
+      "react-refresh/only-export-components": "off"
     }
   },
 ]);
