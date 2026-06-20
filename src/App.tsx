@@ -5,12 +5,10 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
 import Details from './components/Details/Details';
-import { ThemeProvider } from './context/ThemeProvider';
 
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
@@ -20,7 +18,6 @@ const App: React.FC = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </ThemeProvider>
     </ErrorBoundary>
   );
 };

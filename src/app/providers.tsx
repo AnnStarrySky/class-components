@@ -2,6 +2,7 @@
 
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from '../query/query-client'
+import { ThemeProvider } from '../context/ThemeProvider'
 
 export default function Providers({
   children,
@@ -10,7 +11,9 @@ export default function Providers({
 }) {
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <ThemeProvider>
+        {children}
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }
