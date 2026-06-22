@@ -1,26 +1,29 @@
-import { useSearchParams } from "react-router-dom";
+'use client'
+
 import Search from '../Search/Search';
 import Results from '../Results/Results';
 import ErrorSimulator from '../ErrorBoundary/ErrorSimulator';
-import { Outlet, useLocation } from "react-router-dom";
-import { Link } from 'react-router-dom';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { usePokemonStore } from "../../store/usePokemonStore";
 import ThemeToggler from "../ThemeToggler/ThemeToggler";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
+
 const Layout = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage('searchQuery', '');
-  const [, setSearchParams] = useSearchParams();
+  const router = useRouter()
   const queryClient = useQueryClient();
 
   const handleSearch = (value: string) => {
-    setSearchQuery(value);
-    setSearchParams({ page: "1" });
+  setSearchQuery(value);
+  router.push('/?page=1');
   };
 
-  const location = useLocation();
-  const isDetailsPage = location.pathname.startsWith('/details/');
+  const pathname = usePathname();
+  const isDetailsPage =
+  pathname.startsWith('/details/');
 
   const selectedPokemons = usePokemonStore(
     (state) => state.selectedPokemons
@@ -76,7 +79,7 @@ const Layout = () => {
           Refresh
         </button>
       </header>
-      <Link to="/about" className="bg-blue-500 text-white px-2 py-2 w-fit">
+      <Link href="/about" className="bg-blue-500 text-white px-2 py-2 w-fit">
           About
       </Link>
       <main className="flex-1 flex gap-4">
@@ -86,7 +89,7 @@ const Layout = () => {
         </div>
         {isDetailsPage && (
           <div className="w-1/2 border-l pl-4">
-            <Outlet />
+            Details page
           </div>
         )}
       </main>

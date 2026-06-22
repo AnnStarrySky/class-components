@@ -1,12 +1,15 @@
+'use client'
 import { useQuery } from '@tanstack/react-query';
-import { Link, useSearchParams } from "react-router-dom";
+import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 import { fetchOnePokemon, fetchPokemons, type Pokemon } from '../../api/pokemonApi';
 import { usePokemonStore } from '../../store/usePokemonStore';
 import { ITEMS_PER_PAGE } from '../../constants/paginationNumber';
 
 const Results = ({ searchQuery }: { searchQuery: string }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const selectedPokemons = usePokemonStore(
     (state) => state.selectedPokemons
@@ -60,8 +63,7 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         {items.map((p) => (
           <Link
-            to={`/details/${p.name}`}
-            replace
+            href={`/details/${p.name}`}
             key={p.name}
             className="p-4 border rounded bg-white shadow-sm block dark:bg-gray-700 dark:text-white"
           >
@@ -95,7 +97,7 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
           <button
             className="px-3 py-1 border disabled:opacity-50"
             onClick={() =>
-              setSearchParams({ page: String(page - 1) })
+               router.push(`/?page=${page - 1}`)
             }
             disabled={page === 1}
           >
@@ -107,7 +109,7 @@ const Results = ({ searchQuery }: { searchQuery: string }) => {
           <button
             className="px-3 py-1 border"
             onClick={() =>
-              setSearchParams({ page: String(page + 1) })
+               router.push(`/?page=${page + 1}`)
             }
           >
             Next

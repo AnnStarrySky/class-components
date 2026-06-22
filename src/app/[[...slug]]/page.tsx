@@ -1,10 +1,5 @@
-import '../../index.css'
-import { ClientOnly } from './client'
-
-export function generateStaticParams() {
-  return [{ slug: [''] }]
-}
+import Layout from "../../components/Layout/Layout"
 
 export default function Page() {
-  return <ClientOnly />
+  return <Layout />
 }
