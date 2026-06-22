@@ -7,7 +7,7 @@ type Props = {
 };
 
 const Details = async ({ params }: Props) => {
-  const id = params.id;
+  const { id } = await params
 
   let pokemon = null;
   let isError = false;
