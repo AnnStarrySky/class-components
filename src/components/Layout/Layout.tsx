@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react';
 
 const Layout = () => {
   const [searchQuery, setSearchQuery] = useLocalStorage('searchQuery', '');
@@ -85,7 +86,9 @@ const Layout = () => {
       <main className="flex-1 flex gap-4">
         <div className={isDetailsPage ? "w-1/2" : "w-full"}>
           <ErrorSimulator />
+          <Suspense fallback={<p className="mt-4">Loading search params...</p>}>
           <Results searchQuery={searchQuery} />
+          </Suspense>
         </div>
         {isDetailsPage && (
           <div className="w-1/2 border-l pl-4">
